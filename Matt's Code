@@ -1,6 +1,90 @@
+# DataSet Selection
+
+# Dataset Exploration and Preprocessing
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import sns as seaborn
+import seaborn as sns
 
-# Data Exploration
+# Load dataset
+file_path = "C:/Users/13212/Downloads/Life_Expectancy_Data_Updated.csv"
+df = pd.read_csv(file_path)
+print(df.info())
+print(df.head())
+
+# Check for missing values
+print(df.isnull().sum())
+
+# Filling missing numeric column values with the mean
+numeric_values = ['Year', 'Life_expectancy', 'Adult_mortality', 'Infant_deaths', 'Under_five_deaths', 'Alcohol_consumption', 'Hepatitis_B', 'Measles', 'BMI', 'Polio', 'Diphtheria', 'Incidents_HIV', 'GDP_per_capita', 'Population_mln', 'Thinness_ten_nineteen_years', 'Thinness_five_nine_years', 'Schooling']
+df[numeric_values] = df[numeric_values].apply(lambda x: x.fillna(x.mean()))
+
+# Drop missing values
+df.dropna(subset=['Country', 'Region'], inplace=True)
+
+# Handle outlier
+(CODE NEEDS TO BE ADDED)
+
+# Exploratory Data Analysis
+
+# Describes the data
+df.describe()
+
+# Univariate Analysis
+# Histogram of the Distribution Life Expectancy
+plt.figure(figsize=(10, 8))
+sns.histplot(df['Life_expectancy'], color='green', bins=10, kde=True)
+plt.title('Life Expectancy Distribution')
+plt.xlabel('Life Expectancy (Years)')
+plt.ylabel('Frequency Count')
+plt.grid(True)
+plt.show()
+
+# Box plot of Life Expectancy
+plt.boxplot(df['Life_expectancy'])
+plt.title('Life Expectancy: 5 Number Summary')
+plt.ylabel('Life Expectancy (Years)')
+plt.show()
+
+# Histogram of the Distribution Alcohol Consumption
+plt.figure(figsize=(10, 8))
+sns.histplot(df['Alcohol_consumption'], color='blue', bins=30, kde=True)
+plt.title('Distribution of Alcohol Consumption per capita (15+)')
+plt.xlabel('Alcohol Consumption (in liters of pure alcohol)')
+plt.ylabel('Frequency Count')
+plt.grid(True)
+plt.show()
+
+# Box plot of Life Expectancy
+plt.boxplot(df['Alcohol_consumption'])
+plt.title('Alcohol Consumption per capita (15+): 5 Number Summary')
+plt.ylabel('Alcohol Consumption (in liters of pure alcohol)')
+plt.show()
+
+# Bivariate Analysis
+# Scatterplot of Schooling vs. Life Expectancy
+plt.figure(figsize=(10, 8))
+sns.scatterplot(data=df, x=df['Schooling'], y=df['Life_expectancy'])
+plt.title('Schooling vs. Life Expectancy')
+plt.grid(True)
+plt.show()
+
+# Pair Plot of Key Features
+selected = ['Life_expectancy', 'Schooling', 'Alcohol_consumption', 'GDP_per_capita', 'BMI']
+sns.pairplot(df[selected])
+plt.suptitle("Pair Plot of Key Variables", y=1.0)
+plt.show()
+
+# Multivariate Analysis
+
+# Heatmap Correlation Matrix
+numeric_values = ['Year', 'Life_expectancy', 'Adult_mortality', 'Infant_deaths', 'Under_five_deaths', 'Alcohol_consumption', 'Hepatitis_B', 'Measles', 'BMI', 'Polio', 'Diphtheria', 'Incidents_HIV', 'GDP_per_capita', 'Population_mln', 'Thinness_ten_nineteen_years', 'Thinness_five_nine_years', 'Schooling']
+num_correlation = df[numeric_values]
+plt.figure(figsize=(12, 8))
+sns.heatmap(num_correlation.corr(), annot=True, fmt=".2f", cmap='coolwarm')
+plt.title('Numeric Values Correlation Heatmap')
+plt.show()
+
+
+
