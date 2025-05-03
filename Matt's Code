@@ -87,6 +87,7 @@ plt.title('Numeric Values Correlation Heatmap')
 plt.show()
 
 # Paul's Code
+# Feature Engineering
 
 df.drop(columns=['Country'], inplace=True)
 
@@ -101,6 +102,8 @@ from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
 
+# Model Building
+
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
@@ -109,6 +112,8 @@ regressor = LinearRegression()
 regressor.fit(X_train, y_train)
 
 y_pred = regressor.predict(X_test)
+
+# Model Evaluation and Comparison
 
 from sklearn.metrics import r2_score
 np.set_printoptions(precision=2)
@@ -119,6 +124,8 @@ print("Coefficients:", regressor.coef_)
 print("Intercept:", regressor.intercept_)
 
 print("R2 Score:", r2_score(y_test, y_pred))
+
+# Improvement and Fine Tuning
 
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
