@@ -91,6 +91,8 @@ plt.show()
 
 df.drop(columns=['Country'], inplace=True)
 
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
 region_col_index = df.columns.get_loc('Region')
 ct = ColumnTransformer(transformers=[('encoder', OneHotEncoder(), [region_col_index])], remainder='passthrough')
 X = np.array(ct.fit_transform(df.drop(columns=['Life_expectancy'])))
