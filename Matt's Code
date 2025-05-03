@@ -83,7 +83,7 @@ numeric_values = ['Year', 'Life_expectancy', 'Adult_mortality', 'Infant_deaths',
 num_correlation = df[numeric_values]
 plt.figure(figsize=(12, 8))
 sns.heatmap(num_correlation.corr(), annot=True, fmt=".2f", cmap='coolwarm')
-plt.title('Numeric Values Correlation Heatmap')
+plt.title('Numeric Features Correlation Heatmap')
 plt.show()
 
 # Paul's Code
