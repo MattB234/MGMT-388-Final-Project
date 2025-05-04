@@ -56,7 +56,7 @@ plt.ylabel('Frequency Count')
 plt.grid(True)
 plt.show()
 
-# Box plot of Life Expectancy
+# Box plot of Alcohol Consumption
 plt.boxplot(df['Alcohol_consumption'])
 plt.title('Alcohol Consumption per capita (15+): 5 Number Summary')
 plt.ylabel('Alcohol Consumption (in liters of pure alcohol)')
