@@ -172,9 +172,21 @@ plt.title('Random Forest\nActual vs Predicted')
 plt.tight_layout()
 plt.show()
 
-feature_importances = pd.Series(rf_regressor.feature_importances_, index=X_scaled_df.columns)
+# Reconstruct feature names after one-hot encoding
+region_categories = ct.named_transformers_['encoder'].categories_[0]  # Get Region categories
+region_feature_names = [f'Region_{cat}' for cat in region_categories]  # e.g., Region_Africa, Region_Europe
+
+# Drop 'Region' from original columns and get remaining feature names
+other_feature_names = df.drop(columns=['Life_expectancy', 'Region']).columns.tolist()
+
+# Combine all feature names in correct order
+feature_names = region_feature_names + other_feature_names
+
+# Now create feature_importances Series
+feature_importances = pd.Series(rf_regressor.feature_importances_, index=feature_names)
 feature_importances_sorted = feature_importances.sort_values(ascending=False)
 
+# Plot feature importances
 plt.figure(figsize=(10,6))
 sns.barplot(x=feature_importances_sorted, y=feature_importances_sorted.index)
 plt.title('Feature Importances (Random Forest)')
