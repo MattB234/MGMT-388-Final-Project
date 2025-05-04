@@ -1,0 +1,210 @@
+# Dataset Selection
+# (Provide a brief justification for your choice of dataset based on its relevance, complexity, and potential for analysis)
+
+# Dataset Exploration and Preprocessing
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load dataset
+file_path = "C:/Users/13212/Downloads/Life_Expectancy_Data_Updated.csv"
+df = pd.read_csv(file_path)
+print(df.info())
+print(df.head())
+
+# Check for missing values
+print(df.isnull().sum())
+
+# Filling missing numeric column values with the mean
+numeric_values = ['Year', 'Life_expectancy', 'Adult_mortality', 'Infant_deaths', 'Under_five_deaths', 'Alcohol_consumption', 'Hepatitis_B', 'Measles', 'BMI', 'Polio', 'Diphtheria', 'Incidents_HIV', 'GDP_per_capita', 'Population_mln', 'Thinness_ten_nineteen_years', 'Thinness_five_nine_years', 'Schooling']
+df[numeric_values] = df[numeric_values].apply(lambda x: x.fillna(x.mean()))
+
+# Drop missing values
+df.dropna(subset=['Country', 'Region'], inplace=True)
+
+# Handle outlier (CODE NEEDS TO BE ADDED)
+
+# Exploratory Data Analysis (EDA)
+
+# Describes the data
+df.describe()
+
+# Univariate Analysis
+# Histogram of the Distribution Life Expectancy
+plt.figure(figsize=(10, 8))
+sns.histplot(df['Life_expectancy'], color='green', bins=10, kde=True)
+plt.title('Life Expectancy Distribution')
+plt.xlabel('Life Expectancy (Years)')
+plt.ylabel('Frequency Count')
+plt.grid(True)
+plt.show()
+
+# Box plot of Life Expectancy
+plt.boxplot(df['Life_expectancy'])
+plt.title('Life Expectancy: 5 Number Summary')
+plt.ylabel('Life Expectancy (Years)')
+plt.show()
+
+# Histogram of the Distribution Alcohol Consumption
+plt.figure(figsize=(10, 8))
+sns.histplot(df['Alcohol_consumption'], color='blue', bins=30, kde=True)
+plt.title('Distribution of Alcohol Consumption per capita (15+)')
+plt.xlabel('Alcohol Consumption (in liters of pure alcohol)')
+plt.ylabel('Frequency Count')
+plt.grid(True)
+plt.show()
+
+# Box plot of Life Expectancy
+plt.boxplot(df['Alcohol_consumption'])
+plt.title('Alcohol Consumption per capita (15+): 5 Number Summary')
+plt.ylabel('Alcohol Consumption (in liters of pure alcohol)')
+plt.show()
+
+# Bivariate Analysis
+# Scatterplot of Schooling vs. Life Expectancy
+plt.figure(figsize=(10, 8))
+sns.scatterplot(data=df, x=df['Schooling'], y=df['Life_expectancy'])
+plt.title('Schooling vs. Life Expectancy')
+plt.grid(True)
+plt.show()
+
+# Pair Plot of Key Features
+selected = ['Life_expectancy', 'Schooling', 'Alcohol_consumption', 'GDP_per_capita', 'BMI']
+sns.pairplot(df[selected])
+plt.suptitle("Pair Plot of Key Variables", y=1.0)
+plt.show()
+
+# Multivariate Analysis
+# Heatmap Correlation Matrix
+numeric_values = ['Year', 'Life_expectancy', 'Adult_mortality', 'Infant_deaths', 'Under_five_deaths', 'Alcohol_consumption', 'Hepatitis_B', 'Measles', 'BMI', 'Polio', 'Diphtheria', 'Incidents_HIV', 'GDP_per_capita', 'Population_mln', 'Thinness_ten_nineteen_years', 'Thinness_five_nine_years', 'Schooling']
+num_correlation = df[numeric_values]
+plt.figure(figsize=(12, 8))
+sns.heatmap(num_correlation.corr(), annot=True, fmt=".2f", cmap='coolwarm')
+plt.title('Numeric Features Correlation Heatmap')
+plt.show()
+
+# Feature Engineering
+
+df.drop(columns=['Country'], inplace=True, errors="ignore")
+
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+region_col_index = df.columns.get_loc('Region')
+ct = ColumnTransformer(transformers=[('encoder', OneHotEncoder(), [region_col_index])], remainder='passthrough')
+X = np.array(ct.fit_transform(df.drop(columns=['Life_expectancy'])))
+y = df['Life_expectancy'].values
+
+df.head()
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+# Model Building
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+
+y_pred = regressor.predict(X_test)
+
+# Model Evaluation and Comparison
+
+from sklearn.metrics import r2_score
+np.set_printoptions(precision=2)
+print(np.concatenate((y_pred.reshape(len(y_pred),1), y_test.reshape(len(y_test),1)),1))  
+
+print("Coefficients:", regressor.coef_)
+
+print("Intercept:", regressor.intercept_)
+
+print("R2 Score:", r2_score(y_test, y_pred))
+
+# Improvement and Fine Tuning
+
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split, GridSearchCV
+
+# Decision Tree (Tuned)
+dt_regressor = DecisionTreeRegressor(random_state=0, max_depth=5, min_samples_split=10)
+dt_regressor.fit(X_train, y_train)
+y_pred_dt = dt_regressor.predict(X_test)
+r2_dt = r2_score(y_test, y_pred_dt)
+print("Decision Tree Regression (Tuned) R2 Score:", r2_dt)
+
+# Random Forest Regression
+rf_regressor = RandomForestRegressor(n_estimators=100, random_state=0)
+rf_regressor.fit(X_train, y_train)
+y_pred_rf = rf_regressor.predict(X_test)
+r2_rf = r2_score(y_test, y_pred_rf)
+print("Random Forest Regression R2 Score:", r2_rf)
+
+plt.figure(figsize=(18,5))
+
+y_pred = regressor.predict(X_test)
+y_pred_lr = y_pred
+# Linear Regression
+plt.subplot(1,3,1)
+plt.scatter(y_test, y_pred_lr, color='blue', edgecolor='k')
+plt.xlabel('Actual Life Expectancy')
+plt.ylabel('Predicted Life Expectancy')
+plt.title('Linear Regression\nActual vs Predicted')
+
+# Decision Tree
+plt.subplot(1,3,2)
+plt.scatter(y_test, y_pred_dt, color='green', edgecolor='k')
+plt.xlabel('Actual Life Expectancy')
+plt.ylabel('Predicted Life Expectancy')
+plt.title('Decision Tree (Tuned)\nActual vs Predicted')
+
+# Random Forest
+plt.subplot(1,3,3)
+plt.scatter(y_test, y_pred_rf, color='orange', edgecolor='k')
+plt.xlabel('Actual Life Expectancy')
+plt.ylabel('Predicted Life Expectancy')
+plt.title('Random Forest\nActual vs Predicted')
+plt.tight_layout()
+plt.show()
+
+feature_importances = pd.Series(rf_regressor.feature_importances_, index=X_scaled_df.columns)
+feature_importances_sorted = feature_importances.sort_values(ascending=False)
+
+plt.figure(figsize=(10,6))
+sns.barplot(x=feature_importances_sorted, y=feature_importances_sorted.index)
+plt.title('Feature Importances (Random Forest)')
+plt.xlabel('Importance Score')
+plt.ylabel('Feature')
+plt.show()
+
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [None, 5, 10],
+    'min_samples_split': [2, 5, 10]
+}
+
+grid_search_rf = GridSearchCV(estimator=RandomForestRegressor(random_state=0),
+                               param_grid=param_grid,
+                               cv=3,
+                               scoring='r2',
+                               n_jobs=-1)
+
+grid_search_rf.fit(X_train, y_train)
+
+best_rf = grid_search_rf.best_estimator_
+print("Best Random Forest Parameters:", grid_search_rf.best_params_)
+
+# Predictions with tuned model
+y_pred_rf_tuned = best_rf.predict(X_test)
+r2_rf_tuned = r2_score(y_test, y_pred_rf_tuned)
+print("Tuned Random Forest R2 Score:", r2_rf_tuned)
+
+print("\nFinal R2 Scores")
+print(f"Linear Regression: {r2_lr:.3f}")
+print(f"Decision Tree (Tuned): {r2_dt:.3f}")
+print(f"Random Forest: {r2_rf:.3f}")
+print(f"Tuned Random Forest: {r2_rf_tuned:.3f}")
