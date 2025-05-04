@@ -1,5 +1,5 @@
 # Dataset Selection
-# (Provide a brief justification for your choice of dataset based on its relevance, complexity, and potential for analysis)
+# (We chose to use a dataset called Life Expectancy (WHO). The dataset includes 2865 rows and 21 features that are seen as factors in predicting an individual’s life expectancy. Life expectancy can provide insight on the quality of life in a country/region and by understanding the key factors behind it can prove to be beneficial in improving people’s health and key socioeconomic factors. The data within the dataset can provide insights as to the correlation between various factors and life expectancy as well as how different combinations of factors affect life expectancy.)
 
 # Dataset Exploration and Preprocessing
 import pandas as pd
