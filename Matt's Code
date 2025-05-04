@@ -89,7 +89,7 @@ plt.show()
 # Paul's Code
 # Feature Engineering
 
-df.drop(columns=['Country'], inplace=True)
+df.drop(columns=['Country'], inplace=True, errors="ignore")
 
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
